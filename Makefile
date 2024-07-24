@@ -1,7 +1,7 @@
 
 FONTES = boot.s stubs.c fb.c main.c
 LDSCRIPT = linker.ld
-PROJETO = fbuffer
+PROJETO = kernel-panic-hdmi
 
 #
 # Arquivos de saída 
@@ -23,7 +23,7 @@ OBJ = $(FONTES:.s=.o)
 OBJETOS = $(OBJ:.c=.o)
 
 LDOPTS = -lc -L/usr/lib/arm-none-eabi/newlib
-LDOPTS += -lgcc -L/usr/lib/gcc/arm-none-eabi/12.2.1/
+LDOPTS += -lgcc -L/usr/lib/gcc/arm-none-eabi/10.3.1/ # Mudar versao dependendo da instalação presente no computador
 
 all: ${EXEC} ${LIST} ${IMAGE} ${HEXFL}
 
@@ -69,5 +69,5 @@ ${HEXFL}: ${EXEC}
 # Limpar tudo
 #
 clean:
-	rm -f *.o ${EXEC} ${MAP} ${LIST} ${IMAGE}
+	rm -f *.o ${EXEC} ${MAP} ${LIST} ${IMAGE} ${HEXFL}
 
