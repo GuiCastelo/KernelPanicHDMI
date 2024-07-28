@@ -13,8 +13,8 @@
 #define set_bit(X, Y)        X |= __bit(Y)
 #define clr_bit(X, Y)        X &= (~__bit(Y))
 
-#define PERIPH_BASE  0x3f000000
-//#define PERIPH_BASE  0x20000000 no RPi0 e RPi1
+//#define PERIPH_BASE  0x3f000000
+#define PERIPH_BASE  0x20000000 //no RPi0 e RPi1
 #define GPIO_ADDR    (PERIPH_BASE + 0x200000)
 #define AUX_ADDR     (PERIPH_BASE + 0x215000)
 #define AUX_MU_ADDR  (PERIPH_BASE + 0x215040)

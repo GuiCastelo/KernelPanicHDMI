@@ -1,73 +1,37 @@
 
-FONTES = boot.s stubs.c fb.c main.c
-LDSCRIPT = linker.ld
-PROJETO = kernel-panic-hdmi
+ARMGNU ?= arm-none-eabi
+#ARMGNU ?= arm-linux-gnueabi
 
-#
-# Arquivos de saída 
-#
-EXEC = ${PROJETO}.elf
-MAP = ${PROJETO}.map
-LIST = ${PROJETO}.list
-IMAGE = ${PROJETO}.img
-HEXFL = ${PROJETO}.hex
+AOPS = --warn --fatal-warnings
+COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding
 
-PREFIXO = arm-none-eabi-
-AS = ${PREFIXO}as
-LD = ${PREFIXO}ld
-GCC = ${PREFIXO}gcc
-OBJCPY = ${PREFIXO}objcopy
-OBJDMP = ${PREFIXO}objdump
-OPTS = -march=armv7-a -mtune=cortex-a7 -g -O1
-OBJ = $(FONTES:.s=.o)
-OBJETOS = $(OBJ:.c=.o)
+all : kernel.img
 
-LDOPTS = -lc -L/usr/lib/arm-none-eabi/newlib
-LDOPTS += -lgcc -L/usr/lib/gcc/arm-none-eabi/10.3.1/ # Mudar versao dependendo da instalação presente no computador
+clean :
+	rm -f *.o
+	rm -f *.bin
+	rm -f *.hex
+	rm -f *.srec
+	rm -f *.elf
+	rm -f *.list
+	rm -f *.img
 
-all: ${EXEC} ${LIST} ${IMAGE} ${HEXFL}
+boot.o : boot.s
+	$(ARMGNU)-as $(AOPS) boot.s -o boot.o
 
-rebuild: clean all
+fb.o : fb.c
+	$(ARMGNU)-gcc $(COPS) -c fb.c -o fb.o
 
-#
-# Gerar executável
-#
-${EXEC}: ${OBJETOS}
-	${LD} -T ${LDSCRIPT} -M=${MAP} ${OBJETOS} -o $@ ${LDOPTS}
+main.o : main.c
+	$(ARMGNU)-gcc $(COPS) -c main.c -o main.o
 
-#
-# Gerar listagem
-#
-${LIST}: ${EXEC}
-	${OBJDMP} -std ${EXEC} > ${LIST}
+stubs.o : stubs.c
+	$(ARMGNU)-gcc $(COPS) -c stubs.c -o stubs.o
 
-#
-# Gerar imagem binária
-#
-${IMAGE}: ${EXEC}
-	${OBJCPY} -O binary ${EXEC} ${IMAGE}
+hdmi.elf : linker.ld boot.o fb.o main.o stubs.o
+	$(ARMGNU)-ld boot.o fb.o main.o stubs.o -T linker.ld -o hdmi.elf -lc -L/usr/lib/arm-none-eabi/newlib
+	$(ARMGNU)-objdump -D hdmi.elf > hdmi.list
 
-#
-# Gerar arquivo HEX
-#
-${HEXFL}: ${EXEC}
-	${OBJCPY} -O ihex ${EXEC} ${HEXFL}
-
-#
-# Compilar arquivos em C
-#
-.c.o:
-	${GCC} ${OPTS} -c -o $@ $<
-
-#
-# Montar arquivos em assembler
-#
-.s.o:
-	${AS} -g -o $@ $<
-
-#
-# Limpar tudo
-#
-clean:
-	rm -f *.o ${EXEC} ${MAP} ${LIST} ${IMAGE} ${HEXFL}
-
+kernel.img : hdmi.elf
+	$(ARMGNU)-objcopy --srec-forceS3 hdmi.elf -O srec hdmi.srec
+	$(ARMGNU)-objcopy hdmi.elf -O binary kernel.img
