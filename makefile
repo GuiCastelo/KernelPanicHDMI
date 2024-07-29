@@ -17,7 +17,7 @@ kernel=${dist_dir}kernel.img
 all: ${kernel}
 
 ${kernel}: ${asm_objs} ${c_objs}
-	${cc}-ld ${lflags} ${asm_objs} ${c_objs} -o ${build_dir}kernel.elf
+	${cc}-ld ${lflags} ${asm_objs} ${c_objs} -o ${build_dir}kernel.elf -lgcc -L/usr/lib/gcc/arm-none-eabi/10.3.1/
 	${cc}-objcopy ${build_dir}kernel.elf -O binary ${dist_dir}kernel.img
 
 ${c_objs}: ${build_dir}%.o:${src_dir}%.c

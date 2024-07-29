@@ -7,9 +7,7 @@
 #include "framebuffer.h"
 #include "mailbox.h"
 #include "interface.h"
-
-#define WIDTH 800
-#define HEIGHT 600
+#include "common.h"
 
 /* defined in the linker script */
 extern int _bss_start_;

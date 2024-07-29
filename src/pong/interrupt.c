@@ -1,6 +1,4 @@
-#include <stdint.h>
-#include "bcm.h"
-#include "interface.h"
+#include "interrupt.h"
 
 /**
  * Chamado pelo serviço de interrupção irq
