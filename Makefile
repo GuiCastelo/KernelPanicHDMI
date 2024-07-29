@@ -1,37 +1,83 @@
 
-ARMGNU ?= arm-none-eabi
-#ARMGNU ?= arm-linux-gnueabi
+FONTES = main.c fb.c boot.s stubs.c
+LDSCRIPT = linker.ld
+RPICPU = bcm2835
+PROJECT = hdmi
 
-AOPS = --warn --fatal-warnings
-COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding
+#
+# Arquivos de saída 
+#
+EXEC = ${PROJECT}.elf
+MAP = ${PROJECT}.map
+IMAGE = ${PROJECT}.img
+HEXFILE = ${PROJECT}.hex
+LIST = ${PROJECT}.list
 
-all : kernel.img
+PREFIXO = arm-none-eabi-
+AS = ${PREFIXO}as
+LD = ${PREFIXO}ld
+GCC = ${PREFIXO}gcc
+OBJCPY = ${PREFIXO}objcopy
+OBJDMP = ${PREFIXO}objdump
 
-clean :
-	rm -f *.o
-	rm -f *.bin
-	rm -f *.hex
-	rm -f *.srec
-	rm -f *.elf
-	rm -f *.list
-	rm -f *.img
+LDOPTS = -lc -L/usr/lib/arm-none-eabi/newlib
+LDOPTS += -lgcc -L/usr/lib/gcc/arm-none-eabi/13.2.1/ # Mudar versao dependendo da instalação presente no computador
 
-boot.o : boot.s
-	$(ARMGNU)-as $(AOPS) boot.s -o boot.o
+ifeq (${RPICPU}, bcm2836)
+	# Raspberry Pi v.2 ou v.3
+	ASMOPTIONS = -g --defsym RPICPU=2
+	COPTIONS = -march=armv7-a -mtune=cortex-a7 -g -D RPICPU=2
+else
+	ifeq (${RPICPU}, bcm2835)
+  		# Raspberry Pi v.0 ou v.1
+   	ASMOPTIONS = -march=armv6zk -g --defsym RPICPU=0
+   	COPTIONS = -march=armv6zk -mtune=arm1176jzf-s -g -D RPICPU=0
+	endif
+endif
 
-fb.o : fb.c
-	$(ARMGNU)-gcc $(COPS) -c fb.c -o fb.o
+OBJ = $(FONTES:.s=.o)
+OBJETOS = $(OBJ:.c=.o)
 
-main.o : main.c
-	$(ARMGNU)-gcc $(COPS) -c main.c -o main.o
+all: ${EXEC} ${IMAGE} ${LIST} ${HEXFILE}
 
-stubs.o : stubs.c
-	$(ARMGNU)-gcc $(COPS) -c stubs.c -o stubs.o
+#
+# Gerar executável
+#
+${EXEC}: ${OBJETOS}
+	${LD} -T ${LDSCRIPT} -M=${MAP} ${OBJETOS} -o $@ ${LDOPTS}
 
-hdmi.elf : linker.ld boot.o fb.o main.o stubs.o
-	$(ARMGNU)-ld boot.o fb.o main.o stubs.o -T linker.ld -o hdmi.elf -lc -L/usr/lib/arm-none-eabi/newlib
-	$(ARMGNU)-objdump -D hdmi.elf > hdmi.list
+#
+# Gerar imagem
+#
+${IMAGE}: ${EXEC}
+	${OBJCPY} ${EXEC} -O binary ${IMAGE}
 
-kernel.img : hdmi.elf
-	$(ARMGNU)-objcopy --srec-forceS3 hdmi.elf -O srec hdmi.srec
-	$(ARMGNU)-objcopy hdmi.elf -O binary kernel.img
+#
+# Gerar intel Hex
+#
+${HEXFILE}: ${EXEC}
+	${OBJCPY} ${EXEC} -O ihex ${HEXFILE}
+
+#
+# Gerar listagem
+#
+${LIST}: ${EXEC}
+	${OBJDMP} -d ${EXEC} > ${LIST}
+
+#
+# Compilar arquivos em C
+#
+.c.o:
+	${GCC} ${COPTIONS} -c -o $@ $<
+
+#
+# Montar arquivos em assembler
+#
+.s.o:
+	${AS} ${ASMOPTIONS} -o $@ $<
+
+#
+# Limpar tudo
+#
+clean:
+	rm -f *.o ${EXEC} ${MAP} ${LIST} ${IMAGE}
