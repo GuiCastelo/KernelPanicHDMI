@@ -7,7 +7,7 @@
 #include "framebuffer.h"
 #include "mailbox.h"
 #include "interface.h"
-#include "common.h"
+#include "interrupt.h"
 
 /* defined in the linker script */
 extern int _bss_start_;
@@ -40,6 +40,8 @@ void kernel_main ()
   fb_info_t fbInfo;
   initializeFrameBuffer(&fbInfo, WIDTH, HEIGHT, 32);
   interface_init(&fbInfo);
+
+  irq_init();
 
   while (1);
 }

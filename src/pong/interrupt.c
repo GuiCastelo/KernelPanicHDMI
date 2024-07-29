@@ -1,5 +1,7 @@
 #include "interrupt.h"
 
+uint32_t tick = 0;
+
 /**
  * Chamado pelo serviço de interrupção irq
  * Deve ser a interrupção do core timer ou de UART
@@ -10,7 +12,12 @@ void trata_irq(void) {
     */
     if(bit_is_set(IRQ_REG(pending_basic), 0)) {
         TIMER_REG(ack) = 1;                       // reconhece a interrupção
-        update_ball();
+        tick ++;
+        if(tick > 10) {
+            delete_ball();
+            //update_interface();
+            tick = 0;
+        }
         return;
     }
 
@@ -21,7 +28,7 @@ void irq_init(void) {
     /*
     * Configura interrupção do timer.
     */
-    TIMER_REG(load) = 10000;             // 1MHz / 10000 = 100 Hz -> Definit intervalo de tempo
+    TIMER_REG(load) = 10000;             // 1MHz / 10000 = 100 Hz -> Definir intervalo de tempo
     TIMER_REG(control) = __bit(9)        // habilita free-running counter
                         | __bit(7)       // habilita timer
                         | __bit(5)       // habilita interrupção

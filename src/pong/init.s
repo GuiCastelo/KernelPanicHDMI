@@ -42,7 +42,7 @@ reset:
 
 	mov r0, #0xd3           // Modo SVC, interrupções mascaradas
 	msr cpsr, r0
-  ldr sp,=_stack_top_
+  	ldr sp,=_stack_top_
 
 	// Continua executando no modo supervisor (SVC), interrupções desabilitadas
 
@@ -70,7 +70,7 @@ irq:
    // Salva o endereco de retorno
    push {lr}
    bl trata_irq  // função em C
-	 pop {lr}
+   pop {lr}
    movs pc, lr
 
 delay:
