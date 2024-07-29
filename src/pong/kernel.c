@@ -7,7 +7,6 @@
 #include "framebuffer.h"
 #include "mailbox.h"
 #include "interface.h"
-#include "ascii.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -43,7 +42,6 @@ void kernel_main ()
   fb_info_t fbInfo;
   initializeFrameBuffer(&fbInfo, WIDTH, HEIGHT, 32);
   interface_init(&fbInfo);
-  renderString(&fbInfo, "Hello, world!");
 
   while (1);
 }
