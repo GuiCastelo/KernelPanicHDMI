@@ -1,5 +1,3 @@
-_stack_top_ = 0x00000000 + 128 * 1024 * 1024;
-
 SECTIONS {
   .init 0x8000 : {
     *(.init)
@@ -23,6 +21,13 @@ SECTIONS {
     . = ALIGN(8);
   }
   _bss_end_ = .;
+
+  . = ALIGN(8);
+  heap_addr = .;
+  . = . + 32K;
+  _stack_top_ = .;
+  . = . + 4K;
+  _stack_irq = .;
 
   _end_ = .;
 }
