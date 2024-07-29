@@ -8,4 +8,4 @@
 .globl __terminal_font__
 
 __terminal_font__:
-  .incbin "src/monospace_font.bin" 
+  .incbin "src/std/monospace_font.bin"
