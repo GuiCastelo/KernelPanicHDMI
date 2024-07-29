@@ -6,7 +6,7 @@ lflags=-T ${lscript}
 
 dist_dir=dist/
 build_dir=build/
-src_dir=src/std/
+src_dir=src/square/
 
 asm_srcs=${wildcard ${src_dir}*.s}
 asm_objs=${asm_srcs:${src_dir}%.s=${build_dir}%.o}
