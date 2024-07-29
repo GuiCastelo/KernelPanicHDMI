@@ -1,21 +1,28 @@
+_stack_top_ = 0x00000000 + 128 * 1024 * 1024;
 
 SECTIONS {
-  .text 0x8000 : {
-    boot.o(.text)
-    *(.text)
+  .init 0x8000 : {
+    *(.init)
   }
+  
+  .text : {
+    *(.text)
+    . = ALIGN(8);
+    *(.rodata)
+  }
+  
+  .data : {
+    *(.data)
+    . = ALIGN(8);
+    _edata = .;
+  }
+  
+  _bss_start_ = .;
+  .bss : {
+    *(.bss)
+    . = ALIGN(8);
+  }
+  _bss_end_ = .;
 
-  . = ALIGN(0x4);
-  data_begin = .;
-  .data : { *(.data) }
-
-  . = ALIGN(0x4);
-  bss_begin = .;
-  .bss : { *(.bss*) }
-  bss_end = .;
-
-  . = ALIGN(8);
-  heap_addr = .;
-  . = . + 32K;
-  stack_addr = .;
+  _end_ = .;
 }

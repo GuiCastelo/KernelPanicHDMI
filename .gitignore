@@ -1,7 +1,0 @@
-*.o
-*.elf
-*.hex
-*.img
-*.list
-*.map
-*.srec
