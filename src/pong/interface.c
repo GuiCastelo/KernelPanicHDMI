@@ -3,6 +3,18 @@
 fb_info_t *fb;
 states_t states = {0};
 
+void draw_delimiters() {
+    uint32_t white_color = pack_color(255, 255, 255, 255);
+    for(int i = 0; i < HEIGHT; i++) {
+        fbPutPixel(fb, 0, i, white_color);
+        fbPutPixel(fb, WIDTH, i, white_color);
+    }
+    for(int j = 0; j < WIDTH; j ++) {
+        fbPutPixel(fb, j, 0, white_color);
+        fbPutPixel(fb, j, HEIGHT, white_color);
+    }
+}
+
 void create_ball() {
     uint32_t white_color = pack_color(255, 255, 255, 255);
     for(int i = 0; i < BALL_SIDE; i++) {
@@ -73,18 +85,6 @@ void interface_init(fb_info_t *fbInfo) {
     create_right_bar();
 }
 
-void update_ball(ball_state_t* ball_state) {
-    delete_ball();
-    ball_state->x_position += ball_state->delta_x;
-    ball_state->y_position += ball_state->delta_y;
-    create_ball();
-}
-
-void update_interface(void) {
-    update_ball(&states.ball_state);
-    check_colision(&states.ball_state, &states.left_bar_state, &states.right_bar_state);
-}
-
 void restart_interface() {
     delete_ball();
     delete_left_bar();
@@ -94,6 +94,13 @@ void restart_interface() {
     create_left_bar();
     create_right_bar();
 };
+
+void update_ball(ball_state_t* ball_state) {
+    delete_ball();
+    ball_state->x_position += ball_state->delta_x;
+    ball_state->y_position += ball_state->delta_y;
+    create_ball();
+}
 
 void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_state_t *right_bar_state) {
     if (ball_state->x_position==0 || ball_state->x_position==(WIDTH-BALL_SIDE)) { // Colisao nos delimitadores laterais
@@ -110,16 +117,9 @@ void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_s
     }
 }
 
-void draw_delimiters() {
-    uint32_t white_color = pack_color(255, 255, 255, 255);
-    for(int i = 0; i < HEIGHT; i++) {
-        fbPutPixel(fb, 0, i, white_color);
-        fbPutPixel(fb, WIDTH, i, white_color);
-    }
-    for(int j = 0; j < WIDTH; j ++) {
-        fbPutPixel(fb, j, 0, white_color);
-        fbPutPixel(fb, j, HEIGHT, white_color);
-    }
+void update_interface(void) {
+    update_ball(&states.ball_state);
+    check_colision(&states.ball_state, &states.left_bar_state, &states.right_bar_state);
 }
 
 void update_bar(char action) {
