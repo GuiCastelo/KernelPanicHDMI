@@ -118,8 +118,8 @@ void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_s
 }
 
 void update_interface(void) {
-    update_ball(&states.ball_state);
     check_colision(&states.ball_state, &states.left_bar_state, &states.right_bar_state);
+    update_ball(&states.ball_state);
 }
 
 void update_bar(char action) {
