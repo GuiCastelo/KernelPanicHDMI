@@ -16,6 +16,7 @@
 //#define PERIPH_BASE  0x3f000000
 #define PERIPH_BASE  0x20000000 //no RPi0 e RPi1
 #define GPIO_ADDR    (PERIPH_BASE + 0x200000)
+#define UART_ADDR    (PERIPH_BASE + 0x201000)
 #define AUX_ADDR     (PERIPH_BASE + 0x215000)
 #define AUX_MU_ADDR  (PERIPH_BASE + 0x215040)
 #define TIMER_ADDR   (PERIPH_BASE + 0x00B400)
@@ -144,5 +145,45 @@ typedef struct {
    uint32_t write;
 } gpumail_reg_t;
 #define GPUMAIL_REG(X)     ((volatile gpumail_reg_t*)(GPU_MAILBOX_ADDR))->X
+
+typedef struct {
+   uint32_t dr;
+   uint32_t rsrecr;
+   unsigned : 32;
+   unsigned : 32;
+   unsigned : 32;
+   unsigned : 32;
+   uint32_t fr;
+   uint32_t ilpr;
+   uint32_t ibrd;
+   uint32_t fbrd;
+   uint32_t lcrh;
+   uint32_t cr;
+   uint32_t ifls;    // Interupt FIFO Level Select Register
+   uint32_t imsc;    // Interupt Mask Set Clear Register
+   uint32_t ris;     // Raw Interupt Status Register
+   uint32_t mis;     // Masked Interupt Status Register
+   uint32_t icr;     // Interupt Clear Register
+   uint32_t dmacr;   // DMA Control Register
+   unsigned : 32; // 4c
+   unsigned : 32; // 50
+   unsigned : 32; // 54
+   unsigned : 32; // 58
+   unsigned : 32; // 5c
+   unsigned : 32; // 60
+   unsigned : 32; // 64
+   unsigned : 32; // 68
+   unsigned : 32; // 6c
+   unsigned : 32; // 70
+   unsigned : 32; // 74
+   unsigned : 32; // 78
+   unsigned : 32; // 7c
+   uint32_t itcr;    // Test Control register 
+   uint32_t itip;    // Integration test input reg
+   uint32_t itop;    // Integration test output reg
+   uint32_t tdr;     // Test Data Reg 
+
+} uart_reg_t;
+#define UART_REG(X)        ((volatile uart_reg_t*)(UART_ADDR))->X
 
 #endif

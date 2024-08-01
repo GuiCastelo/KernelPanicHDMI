@@ -53,10 +53,10 @@ void init_ball(void) {
     states.ball_state.y_position = HEIGHT/2 - BALL_SIDE/2;
     int x_value = 0;
     do {
-        x_value = rand_range(-3,3);
+        x_value = rand_range(-5,5);
     } while (x_value == 0); 
     states.ball_state.delta_x = x_value;
-    states.ball_state.delta_y = rand_range(-3,3);
+    states.ball_state.delta_y = rand_range(-5,5);
     create_ball();
 }
 
