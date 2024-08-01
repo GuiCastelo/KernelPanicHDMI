@@ -6,3 +6,4 @@
 
 void trata_irq(void);
 void irq_init(void);
+extern void enable_irq(void);

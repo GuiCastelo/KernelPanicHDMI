@@ -36,6 +36,7 @@ void init ()
 void kernel_main ()
 {
   init();
+  enable_irq();
 
   fb_info_t fbInfo;
   initializeFrameBuffer(&fbInfo, WIDTH, HEIGHT, 32);

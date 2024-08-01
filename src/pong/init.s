@@ -56,7 +56,7 @@ reset:
 	ldmia r0!, {r2,r3,r4,r5,r6,r7,r8,r9}
 	stmia r1!, {r2,r3,r4,r5,r6,r7,r8,r9}
 
-  b kernel_main
+	b kernel_main
 
 /**
 * Trava o processador (panic)
@@ -65,6 +65,30 @@ panic:
    wfe
    b panic
 
+/*
+ * Habilita interrupcoes
+ */
+.global enable_irq
+enable_irq:
+   mrs r0, cpsr
+   bic r0, r0, #(1 << 7)
+   msr cpsr_c, r0
+   mov pc, lr
+/*
+ * Desabilita interrupcoes
+ */
+.global disable_irq
+disable_irq:
+   mrs r0, cpsr
+   orr r0, r0, #(1 << 7)
+   msr cpsr_c, r0
+   mov pc, lr
+
+/*
+ * Tratamento das interrupções.
+ * Essa interrupcao e chamada pelo relogio
+ * Quando entra nessa rotina o sistema já está no modo SVR
+ */
 irq:
    sub lr, lr, #4
    // Salva o endereco de retorno

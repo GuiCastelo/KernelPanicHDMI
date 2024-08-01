@@ -14,8 +14,8 @@ void trata_irq(void) {
         TIMER_REG(ack) = 1;                       // reconhece a interrupção
         tick ++;
         if(tick > 10) {
-            delete_ball();
-            //update_interface();
+            //delete_ball();
+            update_interface();
             tick = 0;
         }
         return;
