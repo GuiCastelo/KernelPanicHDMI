@@ -182,7 +182,6 @@ typedef struct {
    uint32_t itip;    // Integration test input reg
    uint32_t itop;    // Integration test output reg
    uint32_t tdr;     // Test Data Reg 
-
 } uart_reg_t;
 #define UART_REG(X)        ((volatile uart_reg_t*)(UART_ADDR))->X
 
