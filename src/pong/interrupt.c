@@ -28,7 +28,7 @@ void irq_init(void) {
     /*
     * Configura interrupção do timer.
     */
-    TIMER_REG(load) = 10000;             // 1MHz / 10000 = 100 Hz -> Definir intervalo de tempo
+    TIMER_REG(load) = 1000;             // 1MHz / 10000 = 100 Hz -> Definir intervalo de tempo
     TIMER_REG(control) = __bit(9)        // habilita free-running counter
                         | __bit(7)       // habilita timer
                         | __bit(5)       // habilita interrupção
