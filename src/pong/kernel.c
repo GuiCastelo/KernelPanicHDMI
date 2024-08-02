@@ -6,6 +6,7 @@
 
 #include "framebuffer.h"
 #include "mailbox.h"
+#include "uart.h"
 #include "interface.h"
 #include "interrupt.h"
 
@@ -37,6 +38,7 @@ void kernel_main ()
 {
   init();
   enable_irq();
+  uart_init();
 
   fb_info_t fbInfo;
   initializeFrameBuffer(&fbInfo, WIDTH, HEIGHT, 32);

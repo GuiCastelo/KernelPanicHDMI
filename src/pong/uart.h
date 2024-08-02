@@ -1,3 +1,6 @@
+#ifndef _UART_H_
+#define _UART_H_
+
 #include <stdint.h>
 #include "bcm.h"
 
@@ -12,3 +15,5 @@ void uart_puts(char *s);
 void uart_debug_puts(char *s, uint32_t value);
 void uart_put_dword(uint32_t a);
 void uart_putc_hex(uint8_t value);
+
+#endif

@@ -14,8 +14,8 @@ void trata_irq(void) {
         TIMER_REG(ack) = 1;                       // reconhece a interrupção
         tick ++;
         if(tick > 10) {
-            //delete_ball();
             update_interface();
+            uart_puts("Teste!!!!!!!!!\n ****\n");
             tick = 0;
         }
         return;
