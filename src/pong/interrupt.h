@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 #include "bcm.h"
-#include "uart.h"
 #include "interface.h"
+#include "muart.h"
 
 void trata_irq(void);
 void irq_init(void);

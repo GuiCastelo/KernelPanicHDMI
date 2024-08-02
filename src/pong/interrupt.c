@@ -15,7 +15,7 @@ void trata_irq(void) {
         tick ++;
         if(tick > 10) {
             update_interface();
-            uart_puts("Teste!!!!!!!!!\n ****\n");
+            mini_uart_puts("Teste cabuloso \n\t****   \n");
             tick = 0;
         }
         return;

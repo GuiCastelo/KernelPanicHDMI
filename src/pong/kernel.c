@@ -6,9 +6,9 @@
 
 #include "framebuffer.h"
 #include "mailbox.h"
-#include "uart.h"
 #include "interface.h"
 #include "interrupt.h"
+#include "muart.h"
 
 /* defined in the linker script */
 extern int _bss_start_;
@@ -38,7 +38,7 @@ void kernel_main ()
 {
   init();
   enable_irq();
-  uart_init();
+  mini_uart_init();
 
   fb_info_t fbInfo;
   initializeFrameBuffer(&fbInfo, WIDTH, HEIGHT, 32);
