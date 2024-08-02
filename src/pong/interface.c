@@ -8,6 +8,8 @@ unsigned long long int seed = 1;  // Semente inicial (pode ser qualquer número)
 #define C 1013904223              // Constante de incremento
 #define M 4294967296              // Modulo (2^32)
 
+void debug_states(void);
+
 unsigned long long int simple_rand() {
     // LCG: Novo valor de seed é (A * seed + C) % M
     seed = (A * seed + C) % M;
@@ -64,7 +66,7 @@ void create_left_bar(void) {
     uint32_t white_color = pack_color(255, 255, 255, 255);
     for(int i = 0; i < BAR_HEIGHT; i++) {
         for(int j = 0; j < BAR_WIDTH; j ++) {
-            fbPutPixel(fb, 0 + j, HEIGHT/2 - BAR_HEIGHT/2 + i, white_color);
+            fbPutPixel(fb, j, states.left_bar_state.y_position + i, white_color);
         }
     }
 }
@@ -73,7 +75,7 @@ void delete_left_bar(void) {
     uint32_t black_color = pack_color(0, 0, 0, 0);
     for(int i = 0; i < BAR_HEIGHT; i++) {
         for(int j = 0; j < BAR_WIDTH; j ++) {
-            fbPutPixel(fb, 0 + j, HEIGHT/2 - BAR_HEIGHT/2 + i, black_color);
+            fbPutPixel(fb, j, states.left_bar_state.y_position + i, black_color);
         }
     }
 }
@@ -82,7 +84,7 @@ void create_right_bar(void) {
     uint32_t white_color = pack_color(255, 255, 255, 255);
     for(int i = 0; i < BAR_HEIGHT; i++) {
         for(int j = 0; j < BAR_WIDTH; j ++) {
-            fbPutPixel(fb, WIDTH - j, HEIGHT/2 - BAR_HEIGHT/2 + i, white_color);
+            fbPutPixel(fb, WIDTH - j, states.right_bar_state.y_position + i, white_color);
         }
     }
 }
@@ -91,21 +93,21 @@ void delete_right_bar(void) {
     uint32_t black_color = pack_color(0, 0, 0, 0);
     for(int i = 0; i < BAR_HEIGHT; i++) {
         for(int j = 0; j < BAR_WIDTH; j ++) {
-            fbPutPixel(fb, WIDTH - j, HEIGHT/2 - BAR_HEIGHT/2 + i, black_color);
+            fbPutPixel(fb, WIDTH - j, states.right_bar_state.y_position + i, black_color);
         }
     }
 }
 
 void init_left_bar() {
-    create_left_bar();
     states.left_bar_state.y_position = HEIGHT/2 - BAR_HEIGHT/2;
     states.left_bar_state.delta_y = 0;
+    create_left_bar();
 };
 
 void init_right_bar() {
-    create_right_bar();
     states.right_bar_state.y_position = HEIGHT/2 - BAR_HEIGHT/2;
     states.right_bar_state.delta_y = 0;
+    create_right_bar();
 }
 
 void interface_init(fb_info_t *fbInfo) {
@@ -122,8 +124,8 @@ void restart_interface() {
     delete_right_bar();
     draw_delimiters();
     init_ball();
-    create_left_bar();
-    create_right_bar();
+    init_left_bar();
+    init_right_bar();
 };
 
 void update_ball(ball_state_t* ball_state) {
@@ -131,6 +133,30 @@ void update_ball(ball_state_t* ball_state) {
     ball_state->x_position += ball_state->delta_x;
     ball_state->y_position += ball_state->delta_y;
     create_ball();
+}
+
+void update_bar(bar_state_t* left_bar_state, bar_state_t* right_bar_state) {
+    
+    if ((left_bar_state->delta_y != 0) &&
+        !(left_bar_state->y_position < 11 && left_bar_state->delta_y < 0) &&
+        !(left_bar_state->y_position > HEIGHT - BAR_HEIGHT - 11 && left_bar_state->delta_y > 0)) {
+            delete_left_bar();
+            left_bar_state->y_position += left_bar_state->delta_y;
+            create_left_bar();
+            debug_states();
+            left_bar_state->delta_y = 0;
+    }
+
+    if ((right_bar_state->delta_y != 0) &&
+        !(right_bar_state->y_position < 11 && right_bar_state->delta_y < 0) &&
+        !(right_bar_state->y_position > HEIGHT - BAR_HEIGHT - 11 && right_bar_state->delta_y > 0)) {
+            delete_right_bar();
+            right_bar_state->y_position += right_bar_state->delta_y;
+            create_right_bar();
+            debug_states();
+            right_bar_state->delta_y = 0;
+    }
+    draw_delimiters();
 }
 
 void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_state_t *right_bar_state) {
@@ -151,8 +177,28 @@ void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_s
 void update_interface(void) {
     check_colision(&states.ball_state, &states.left_bar_state, &states.right_bar_state);
     update_ball(&states.ball_state);
+    update_bar(&states.left_bar_state, &states.right_bar_state);
 }
 
-void update_bar(char action) {
-    
+void debug_states(void) {
+    mini_uart_debug_puts("Left bar y position: ", states.left_bar_state.y_position);
+    mini_uart_debug_puts("Left bar delta y: ", states.left_bar_state.delta_y);
+    mini_uart_debug_puts("Right bar state y position: ", states.right_bar_state.y_position);
+    mini_uart_debug_puts("Right bar state delta y: ", states.right_bar_state.delta_y);
+    mini_uart_puts("\n");
+}
+
+void check_action(char action) {
+    if (action == 'w') {
+        states.left_bar_state.delta_y = -10;
+    }
+    else if (action == 's') {
+        states.left_bar_state.delta_y = 10;
+    }
+    else if (action == 'o') {
+        states.right_bar_state.delta_y = -10;
+    }
+    else if (action == 'l') {
+        states.right_bar_state.delta_y = 10;
+    }
 }

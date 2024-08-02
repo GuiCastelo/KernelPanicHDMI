@@ -3,9 +3,11 @@
 #define __INTERFACE_H__
 
 #include "framebuffer.h"
+#include "muart.h"
 
 void interface_init(fb_info_t *fbInfo);
 void update_interface(void);
+void check_action(char action);
 void delete_ball();
 
 #define WIDTH 1920
@@ -13,8 +15,8 @@ void delete_ball();
 
 #define BALL_SIDE 20
 
-#define BAR_WIDTH (0.015*WIDTH)
-#define BAR_HEIGHT (0.2*HEIGHT)
+#define BAR_WIDTH 28
+#define BAR_HEIGHT 216
 
 typedef struct {
     uint32_t x_position;

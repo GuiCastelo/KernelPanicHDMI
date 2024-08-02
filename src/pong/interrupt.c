@@ -15,13 +15,16 @@ void trata_irq(void) {
         tick ++;
         if(tick > 10) {
             update_interface();
-            mini_uart_puts("Teste cabuloso \n\t****   \n");
+            //mini_uart_puts("Teste cabuloso \n\t****   \n");
             tick = 0;
         }
         return;
     }
 
-    // outras interrupções aqui...
+    /*if(bit_is_set(IRQ_REG(pending_1), 29)) {
+    // Interrupções do periférico AUX.
+        if(bit_is_set(AUX_REG(irq), 0)) uart_irq(); // mini uart
+    }*/
 }
 
 void irq_init(void) {
