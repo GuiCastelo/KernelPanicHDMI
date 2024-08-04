@@ -136,14 +136,14 @@ void update_ball(ball_state_t* ball_state) {
 }
 
 void update_bar(bar_state_t* left_bar_state, bar_state_t* right_bar_state) {
-    
+
     if ((left_bar_state->delta_y != 0) &&
         !(left_bar_state->y_position < 11 && left_bar_state->delta_y < 0) &&
         !(left_bar_state->y_position > HEIGHT - BAR_HEIGHT - 11 && left_bar_state->delta_y > 0)) {
             delete_left_bar();
             left_bar_state->y_position += left_bar_state->delta_y;
             create_left_bar();
-            debug_states();
+            //debug_states();
             left_bar_state->delta_y = 0;
     }
 
@@ -153,7 +153,7 @@ void update_bar(bar_state_t* left_bar_state, bar_state_t* right_bar_state) {
             delete_right_bar();
             right_bar_state->y_position += right_bar_state->delta_y;
             create_right_bar();
-            debug_states();
+            //debug_states();
             right_bar_state->delta_y = 0;
     }
     draw_delimiters();

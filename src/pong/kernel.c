@@ -37,7 +37,7 @@ void init ()
 void kernel_main ()
 {
   init();
-  enable_irq();
+  
   mini_uart_init();
 
   fb_info_t fbInfo;
@@ -46,8 +46,5 @@ void kernel_main ()
 
   irq_init();
 
-  while (1) {
-    uint8_t action = mini_uart_getc();
-    check_action(action);
-  };
+  while (1) {};
 }

@@ -15,7 +15,7 @@ void mini_uart_init(void) {
   GPIO_REG(gppudclk[0]) = 0;
 
   // habilita perifério e configura
-  AUX_REG(enables) = 1;
+  AUX_REG(enables) = 0x00000001; // habilita a mini UART
   MU_REG(cntl) = 0;
   MU_REG(ier) = 0;
   MU_REG(lcr) = 3; // 8 bits
@@ -39,20 +39,7 @@ void mini_uart_puts(char *s) {
 }
 
 uint8_t mini_uart_getc(void) {
-  while((MU_REG(stat) & 0x01) == 0); // não há dados a ler
-  //uint32_t mu_reg_io = MU_REG(io);
-  //uint32_t symbol_available = (MU_REG(stat) & (0x01 << 0));
-  //uint32_t space_available = (MU_REG(stat) & (0x01 << 1)) >> 1;
-  //uint32_t receiver_is_idle = (MU_REG(stat) & (0x01 << 2)) >> 2;
-  //uint32_t transmitter_is_idle = (MU_REG(stat) & (0x01 << 3)) >> 3;
-  //uint32_t receiver_overrun = (MU_REG(stat) & (0x01 << 4)) >> 4;
-  //uint32_t transmit_fifo_is_full = (MU_REG(stat) & (0x01 << 5)) >> 5;
-  //uint32_t rts_status = (MU_REG(stat) & (0x01 << 6)) >> 6;
-  //uint32_t cts_line = (MU_REG(stat) & (0x01 << 7)) >> 7;
-  //uint32_t transmit_fifo_is_empty = (MU_REG(stat) & (0x01 << 8)) >> 8;
-  //uint32_t transmiter_done = (MU_REG(stat) & (0x01 << 9)) >> 9;
-  //uint32_t receive_fifo_levels = (MU_REG(stat) & (1111 << 16)) >> 16;
-  //mini_uart_putc(symbol_available + 0x30);
+  while((MU_REG(stat) & 0x01) == 0); // não há dados a ler 
   return MU_REG(io);
 }
 
