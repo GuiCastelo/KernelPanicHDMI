@@ -236,10 +236,16 @@ void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_s
         ball_state->delta_y = -ball_state->delta_y;
     }
     else if (ball_state->x_position<(BAR_WIDTH+(MAX_BALL_SPEED + 1)) && (ball_state->y_position >= left_bar_state->y_position && ball_state->y_position <= (left_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra esquerda
-        ball_state->delta_x = -ball_state->delta_x;
+        int colision_height_normalized = (left_bar_state->y_position - ball_state->y_position / (BAR_HEIGHT/(2*MAX_BALL_SPEED))) - MAX_BALL_SPEED;
+        ball_state->delta_y = colision_height_normalized;
+        if(colision_height_normalized < 0) colision_height_normalized = -colision_height_normalized;
+        ball_state->delta_x = (MAX_BALL_SPEED + 1) - colision_height_normalized;
     }
     else if (ball_state->x_position>(WIDTH - BAR_WIDTH - (MAX_BALL_SPEED + 1) - BALL_SIDE) && (ball_state->y_position >= right_bar_state->y_position && ball_state->y_position <= (right_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra direita
-        ball_state->delta_x = -ball_state->delta_x;
+        int colision_height_normalized = (right_bar_state->y_position - ball_state->y_position / (BAR_HEIGHT/(2*MAX_BALL_SPEED))) - MAX_BALL_SPEED;
+        ball_state->delta_y = colision_height_normalized;
+        if(colision_height_normalized < 0) colision_height_normalized = -colision_height_normalized;
+        ball_state->delta_x = -(MAX_BALL_SPEED + 1) - colision_height_normalized;
     }
 }
 
