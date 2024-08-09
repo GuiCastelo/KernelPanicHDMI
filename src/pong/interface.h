@@ -14,9 +14,11 @@ void delete_ball();
 #define HEIGHT 1080
 
 #define BALL_SIDE 20
+#define MAX_BALL_SPEED 5
 
 #define BAR_WIDTH 28
 #define BAR_HEIGHT 216
+#define BAR_MOVEMENT_SPEED 50
 
 typedef struct {
     uint32_t x_position;

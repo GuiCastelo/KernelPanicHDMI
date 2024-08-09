@@ -55,10 +55,10 @@ void init_ball(void) {
     states.ball_state.y_position = HEIGHT/2 - BALL_SIDE/2;
     int x_value = 0;
     do {
-        x_value = rand_range(-5,5);
+        x_value = rand_range(-MAX_BALL_SPEED, MAX_BALL_SPEED);
     } while (x_value == 0); 
     states.ball_state.delta_x = x_value;
-    states.ball_state.delta_y = rand_range(-5,5);
+    states.ball_state.delta_y = rand_range(-MAX_BALL_SPEED, MAX_BALL_SPEED);
     create_ball();
 }
 
@@ -137,25 +137,94 @@ void update_ball(ball_state_t* ball_state) {
 
 void update_bar(bar_state_t* left_bar_state, bar_state_t* right_bar_state) {
 
-    if ((left_bar_state->delta_y != 0) &&
-        !(left_bar_state->y_position < 11 && left_bar_state->delta_y < 0) &&
-        !(left_bar_state->y_position > HEIGHT - BAR_HEIGHT - 11 && left_bar_state->delta_y > 0)) {
-            delete_left_bar();
-            left_bar_state->y_position += left_bar_state->delta_y;
-            create_left_bar();
-            //debug_states();
-            left_bar_state->delta_y = 0;
+    // if ((left_bar_state->delta_y != 0) &&
+    //     !(left_bar_state->y_position < (BAR_MOVEMENT_SPEED + 1) && left_bar_state->delta_y < 0) &&
+    //     !(left_bar_state->y_position > HEIGHT - BAR_HEIGHT - (BAR_MOVEMENT_SPEED + 1) && left_bar_state->delta_y > 0)) {
+    //         delete_left_bar();
+    //         left_bar_state->y_position += left_bar_state->delta_y;
+    //         create_left_bar();
+    //         //debug_states();
+    //         left_bar_state->delta_y = 0;
+    // }
+
+    if (left_bar_state->delta_y != 0) {
+        if (left_bar_state->delta_y < 0) {
+            if (left_bar_state->y_position < (BAR_MOVEMENT_SPEED + 1)) {
+                delete_left_bar();
+                left_bar_state->y_position = 0;
+                create_left_bar();
+                //debug_states();
+                left_bar_state->delta_y = 0;
+            } else {
+                delete_left_bar();
+                left_bar_state->y_position += left_bar_state->delta_y;
+                create_left_bar();
+                //debug_states();
+                left_bar_state->delta_y = 0;
+            }
+        }
+
+        if (left_bar_state ->delta_y > 0) {
+            if (left_bar_state->y_position > HEIGHT - BAR_HEIGHT - (BAR_MOVEMENT_SPEED + 1)) {
+                delete_left_bar();
+                left_bar_state->y_position = HEIGHT - BAR_HEIGHT;
+                create_left_bar();
+                //debug_states();
+                left_bar_state->delta_y = 0;
+            } else {
+                delete_left_bar();
+                left_bar_state->y_position += left_bar_state->delta_y;
+                create_left_bar();
+                //debug_states();
+                left_bar_state->delta_y = 0;
+            }
+        }
     }
 
-    if ((right_bar_state->delta_y != 0) &&
-        !(right_bar_state->y_position < 11 && right_bar_state->delta_y < 0) &&
-        !(right_bar_state->y_position > HEIGHT - BAR_HEIGHT - 11 && right_bar_state->delta_y > 0)) {
-            delete_right_bar();
-            right_bar_state->y_position += right_bar_state->delta_y;
-            create_right_bar();
-            //debug_states();
-            right_bar_state->delta_y = 0;
+    // if ((right_bar_state->delta_y != 0) &&
+    //     !(right_bar_state->y_position < (BAR_MOVEMENT_SPEED + 1) && right_bar_state->delta_y < 0) &&
+    //     !(right_bar_state->y_position > HEIGHT - BAR_HEIGHT - (BAR_MOVEMENT_SPEED + 1) && right_bar_state->delta_y > 0)) {
+    //         delete_right_bar();
+    //         right_bar_state->y_position += right_bar_state->delta_y;
+    //         create_right_bar();
+    //         //debug_states();
+    //         right_bar_state->delta_y = 0;
+    // }
+
+    if (right_bar_state->delta_y != 0) {
+        if (right_bar_state->delta_y < 0) {
+            if (right_bar_state->y_position < (BAR_MOVEMENT_SPEED + 1)) {
+                delete_right_bar();
+                right_bar_state->y_position = 0;
+                create_right_bar();
+                //debug_states();
+                right_bar_state->delta_y = 0;
+            } else {
+                delete_right_bar();
+                right_bar_state->y_position += right_bar_state->delta_y;
+                create_right_bar();
+                //debug_states();
+                right_bar_state->delta_y = 0;
+            }
+        }
+
+        if (right_bar_state ->delta_y > 0) {
+            if (right_bar_state->y_position > HEIGHT - BAR_HEIGHT - (BAR_MOVEMENT_SPEED + 1)) {
+                delete_right_bar();
+                right_bar_state->y_position = HEIGHT - BAR_HEIGHT;
+                create_right_bar();
+                //debug_states();
+                right_bar_state->delta_y = 0;
+            } else {
+                delete_right_bar();
+                right_bar_state->y_position += right_bar_state->delta_y;
+                create_right_bar();
+                //debug_states();
+                right_bar_state->delta_y = 0;
+            }
+        }
     }
+
     draw_delimiters();
 }
 
@@ -163,13 +232,13 @@ void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_s
     if (ball_state->x_position<BAR_WIDTH/2 || ball_state->x_position>(WIDTH-BAR_WIDTH/2-BALL_SIDE)) { // Colisao nos delimitadores laterais
         restart_interface();
     }
-    else if (ball_state->y_position<4 || ball_state->y_position>(HEIGHT-BALL_SIDE-4)) { // Colisao no delimitador superior ou inferior
+    else if (ball_state->y_position<(MAX_BALL_SPEED + 1) || ball_state->y_position>(HEIGHT-BALL_SIDE-(MAX_BALL_SPEED + 1))) { // Colisao no delimitador superior ou inferior
         ball_state->delta_y = -ball_state->delta_y;
     }
-    else if (ball_state->x_position<(BAR_WIDTH+4) && (ball_state->y_position >= left_bar_state->y_position && ball_state->y_position <= (left_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra esquerda
+    else if (ball_state->x_position<(BAR_WIDTH+(MAX_BALL_SPEED + 1)) && (ball_state->y_position >= left_bar_state->y_position && ball_state->y_position <= (left_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra esquerda
         ball_state->delta_x = -ball_state->delta_x;
     }
-    else if (ball_state->x_position>(WIDTH - BAR_WIDTH - 4 - BALL_SIDE) && (ball_state->y_position >= right_bar_state->y_position && ball_state->y_position <= (right_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra direita
+    else if (ball_state->x_position>(WIDTH - BAR_WIDTH - (MAX_BALL_SPEED + 1) - BALL_SIDE) && (ball_state->y_position >= right_bar_state->y_position && ball_state->y_position <= (right_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra direita
         ball_state->delta_x = -ball_state->delta_x;
     }
 }
@@ -190,15 +259,15 @@ void debug_states(void) {
 
 void check_action(char action) {
     if (action == 'w') {
-        states.left_bar_state.delta_y = -10;
+        states.left_bar_state.delta_y = -BAR_MOVEMENT_SPEED;
     }
     else if (action == 's') {
-        states.left_bar_state.delta_y = 10;
+        states.left_bar_state.delta_y = BAR_MOVEMENT_SPEED;
     }
     else if (action == 'o') {
-        states.right_bar_state.delta_y = -10;
+        states.right_bar_state.delta_y = -BAR_MOVEMENT_SPEED;
     }
     else if (action == 'l') {
-        states.right_bar_state.delta_y = 10;
+        states.right_bar_state.delta_y = BAR_MOVEMENT_SPEED;
     }
 }
