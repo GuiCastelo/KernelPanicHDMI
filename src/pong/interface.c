@@ -9,6 +9,7 @@ unsigned long long int seed = 1;  // Semente inicial (pode ser qualquer número)
 #define M 4294967296              // Modulo (2^32)
 
 void debug_states(void);
+void debug_ball_state(void);
 
 unsigned long long int simple_rand() {
     // LCG: Novo valor de seed é (A * seed + C) % M
@@ -236,16 +237,22 @@ void check_colision(ball_state_t *ball_state, bar_state_t *left_bar_state, bar_s
         ball_state->delta_y = -ball_state->delta_y;
     }
     else if (ball_state->x_position<(BAR_WIDTH+(MAX_BALL_SPEED + 1)) && (ball_state->y_position >= left_bar_state->y_position && ball_state->y_position <= (left_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra esquerda
+        mini_uart_puts("Colisão na barra da esquerda:\n");
+        debug_ball_state();
         int colision_height_normalized = (left_bar_state->y_position - ball_state->y_position / (BAR_HEIGHT/(2*MAX_BALL_SPEED))) - MAX_BALL_SPEED;
         ball_state->delta_y = colision_height_normalized;
         if(colision_height_normalized < 0) colision_height_normalized = -colision_height_normalized;
         ball_state->delta_x = (MAX_BALL_SPEED + 1) - colision_height_normalized;
+        debug_ball_state();
     }
     else if (ball_state->x_position>(WIDTH - BAR_WIDTH - (MAX_BALL_SPEED + 1) - BALL_SIDE) && (ball_state->y_position >= right_bar_state->y_position && ball_state->y_position <= (right_bar_state->y_position + BAR_HEIGHT))) { // Colisao na barra direita
+        mini_uart_puts("Colisão na barra da direita:\n");
+        debug_ball_state();
         int colision_height_normalized = (right_bar_state->y_position - ball_state->y_position / (BAR_HEIGHT/(2*MAX_BALL_SPEED))) - MAX_BALL_SPEED;
         ball_state->delta_y = colision_height_normalized;
         if(colision_height_normalized < 0) colision_height_normalized = -colision_height_normalized;
         ball_state->delta_x = -(MAX_BALL_SPEED + 1) - colision_height_normalized;
+        debug_ball_state();
     }
 }
 
@@ -255,11 +262,19 @@ void update_interface(void) {
     update_bar(&states.left_bar_state, &states.right_bar_state);
 }
 
-void debug_states(void) {
+void debug_bar_states(void) {
     mini_uart_debug_puts("Left bar y position: ", states.left_bar_state.y_position);
     mini_uart_debug_puts("Left bar delta y: ", states.left_bar_state.delta_y);
     mini_uart_debug_puts("Right bar state y position: ", states.right_bar_state.y_position);
     mini_uart_debug_puts("Right bar state delta y: ", states.right_bar_state.delta_y);
+    mini_uart_puts("\n");
+}
+
+void debug_ball_state(void) {
+    mini_uart_debug_puts("Ball y position: ", states.ball_state.y_position);
+    mini_uart_debug_puts("Ball delta y: ", states.ball_state.delta_y);
+    mini_uart_debug_puts("Ball x position: ", states.ball_state.x_position);
+    mini_uart_debug_puts("Ball delta x: ", states.ball_state.delta_x);
     mini_uart_puts("\n");
 }
 
