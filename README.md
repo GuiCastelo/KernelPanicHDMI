@@ -3,6 +3,8 @@ Repositorio com o código fonte do projeto final da disciplina PCS3732.
 
 O projeto tem como objetivo a implementação de um _driver_ que permitirá a execução do jogo <a href="https://www.ponggame.org/">Pong</a> usando a saída HDMI da Raspberry Pi 0W. O grupo implementará o projeto através de uma aplicação _bare metal_ para o modelo citado de Raspberry Pi.
 
+A documentação referente ao desenvolvimento do projeto se encontra na pasta `doc` no formato PDF.
+
 ## Dependências
 As dependências usadas durante o desenvolvimento do projeto foram:
 - Ferramentas binárias para o ARM, possibilitando realizar operações "cruzadas" para a arquitetura do processador da Raspberry
